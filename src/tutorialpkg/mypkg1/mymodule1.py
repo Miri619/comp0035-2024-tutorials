@@ -19,9 +19,26 @@ if __name__ == '__main__':
     # Locate the data file `paralmpics_raw.csv` relative to this file using pathlib.Path. Prove it exists.
 from pathlib import Path
 
-csv_file = Path(__file__).parent.parent.joinpath('data','paralympics_events_raw.csv')
+raw_file = Path(__file__).parent.parent.joinpath('data','paralympics_events_raw.csv')
 
-if csv_file.exists():
-        print(f"CSV file found: {csv_file}")
+if raw_file.exists():
+        print(f"CSV file found: {raw_file}")
 else:
         print("CSV file not found")
+
+import pandas as pd
+
+raw_df = pd.read_csv(raw_file)
+
+print(raw_df.dtypes)
+
+print(raw_df.describe)
+
+columns_to_change= ['countries', 'events', 'participants_m', 'participants_f', 'participants']
+
+for column in columns_to_change:
+    raw_df[column] = raw_df[column].astype('int')
+
+codes_df = pd.read_csv(Path(__file__).parent.parent.joinpath('data', 'npc_codes.csv'))
+
+raw_df.merge(codes_df, how='left', left_on='raw_df', right_on='events')
